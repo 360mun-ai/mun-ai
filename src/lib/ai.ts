@@ -13,7 +13,7 @@ function getAI() {
 export async function generateSpeechAction(country: string, topic: string, vibe: string) {
   try {
     const genAI = getAI();
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
 
     const prompt = `
       You are an expert Model United Nations strategist and speechwriter.
@@ -44,7 +44,7 @@ export async function generateSpeechAction(country: string, topic: string, vibe:
 export async function researchDeliberationAction(query: string, context?: string) {
   try {
     const genAI = getAI();
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
 
     const prompt = `
       You are the "Best Delegate" MUN Research Assistant.
