@@ -1,6 +1,6 @@
 'use client'
 import { useState } from 'react'
-import { BookOpen, Search, Upload, FileText, Loader2, Sparkles } from 'lucide-react'
+import { BookOpen, Search, Upload, FileText, Loader2, Sparkles, CheckCircle2 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { researchDeliberationAction } from '@/lib/ai'
 
@@ -8,6 +8,17 @@ export default function ResearchLab() {
   const [query, setQuery] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [results, setResults] = useState<string | null>(null)
+  const [fileContent, setFileContent] = useState<string | null>(null)
+  const [fileName, setFileName] = useState<string | null>(null)
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    
+    setFileName(file.name)
+    const text = await file.text() // Simple text extraction for now
+    setFileContent(text)
+  }
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -15,7 +26,7 @@ export default function ResearchLab() {
     setIsLoading(true)
     
     try {
-      const result = await researchDeliberationAction(query)
+      const result = await researchDeliberationAction(query, fileContent || undefined)
       setResults(result)
     } catch (error) {
       setResults("Research failed. Please verify your AI configuration.")
@@ -37,13 +48,20 @@ export default function ResearchLab() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Sidebar: Knowledge Base */}
         <div className="lg:col-span-1 space-y-6">
-          <div className="p-6 rounded-2xl bg-slate-900/50 border border-slate-800 border-dashed flex flex-col items-center justify-center text-center group hover:border-indigo-500/50 transition-colors cursor-pointer">
+          <label className="p-6 rounded-2xl bg-slate-900/50 border border-slate-800 border-dashed flex flex-col items-center justify-center text-center group hover:border-indigo-500/50 transition-colors cursor-pointer relative overflow-hidden">
+            <input type="file" className="hidden" accept=".txt,.pdf" onChange={handleFileUpload} />
             <div className="w-12 h-12 rounded-full bg-indigo-500/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
               <Upload className="w-6 h-6 text-indigo-400" />
             </div>
             <h3 className="font-semibold mb-1">Upload Document</h3>
-            <p className="text-xs text-slate-500">PDF, TXT up to 10MB</p>
-          </div>
+            <p className="text-xs text-slate-500">TXT or PDF (Text-only)</p>
+            {fileName && (
+              <div className="mt-4 flex items-center gap-2 text-emerald-400 text-[10px] font-bold uppercase">
+                <CheckCircle2 className="w-3 h-3" />
+                {fileName} Loaded
+              </div>
+            )}
+          </label>
 
           <div className="p-6 rounded-2xl bg-slate-900/50 border border-slate-800">
             <h3 className="font-semibold mb-4 text-sm uppercase tracking-wider text-slate-500">Active Sources</h3>

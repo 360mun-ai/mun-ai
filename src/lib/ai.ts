@@ -36,15 +36,17 @@ export async function researchDeliberationAction(query: string, context?: string
 
   const prompt = `
     You are the "Best Delegate" MUN Research Assistant.
-    Analyze the following query in the context of international relations and UN policy.
+    Analyze the following query based on the provided document context.
     
     Query: ${query}
-    ${context ? `Additional Context: ${context}` : ""}
+    
+    Document Context: 
+    ${context ? context.substring(0, 30000) : "No specific document provided. Use your general UN knowledge."}
     
     Provide:
-    1. A strategic summary.
-    2. Three key UN resolutions or treaties related to this.
-    3. A "Diplomatic Pro-Tip" for using this information in a debate.
+    1. A strategic summary of how this document relates to the query.
+    2. Specific quotes or clauses (if context provided) to use in debate.
+    3. A "Diplomatic Pro-Tip" for using this information to sway the committee.
     
     Format with clear headings and bullet points. Use a professional, sophisticated tone.
   `;
