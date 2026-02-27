@@ -55,7 +55,7 @@ export default function Sidebar() {
           <UserButton showName />
         </div>
         <Link 
-          href="/settings"
+          href="/dashboard/settings"
           className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-900 transition-all"
         >
           <Settings className="w-5 h-5" />
