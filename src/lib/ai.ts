@@ -7,14 +7,15 @@ function getAI() {
   if (!apiKey) {
     throw new Error("MISSING_API_KEY");
   }
+  // No explicit version here, the SDK handles it
   return new GoogleGenerativeAI(apiKey);
 }
 
 export async function generateSpeechAction(country: string, topic: string, vibe: string) {
   try {
     const genAI = getAI();
-    // Using the absolute model path which works for all API key types
-    const model = genAI.getGenerativeModel({ model: "models/gemini-1.5-flash" });
+    // This is the most stable ID in 2026
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     const prompt = `
       You are an expert Model United Nations strategist and speechwriter.
@@ -35,8 +36,8 @@ export async function generateSpeechAction(country: string, topic: string, vibe:
     return response.text();
   } catch (error: any) {
     console.error("AI Speech Error:", error);
-    if (error.message === "MISSING_API_KEY") {
-      return "ERROR: The API Key is not found in the server environment. Please check Vercel Settings.";
+    if (error.message.includes("404")) {
+      return "AI Error 404: The model name 'gemini-1.5-flash' was not found for your API key. Please check if your key is from Google AI Studio and is activated.";
     }
     return `AI Error: ${error.message || "Unknown error."}`;
   }
@@ -45,7 +46,7 @@ export async function generateSpeechAction(country: string, topic: string, vibe:
 export async function researchDeliberationAction(query: string, context?: string) {
   try {
     const genAI = getAI();
-    const model = genAI.getGenerativeModel({ model: "models/gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     const prompt = `
       You are the "Best Delegate" MUN Research Assistant.
@@ -60,8 +61,6 @@ export async function researchDeliberationAction(query: string, context?: string
       1. A strategic summary of how this document relates to the query.
       2. Specific quotes or clauses (if context provided) to use in debate.
       3. A "Diplomatic Pro-Tip" for using this information to sway the committee.
-      
-      Format with clear headings and bullet points. Use a professional, sophisticated tone.
     `;
 
     const result = await model.generateContent(prompt);
@@ -69,9 +68,6 @@ export async function researchDeliberationAction(query: string, context?: string
     return response.text();
   } catch (error: any) {
     console.error("AI Research Error:", error);
-    if (error.message === "MISSING_API_KEY") {
-      return "ERROR: The API Key is not found in the server environment. Please check Vercel Settings.";
-    }
     return `AI Error: ${error.message || "Unknown error."}`;
   }
 }

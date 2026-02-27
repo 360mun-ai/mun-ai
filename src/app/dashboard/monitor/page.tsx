@@ -1,8 +1,9 @@
 'use client'
+import { useState, useEffect } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls, Sphere, MeshDistortMaterial, Stars } from '@react-three/drei'
 import { motion } from 'framer-motion'
-import { Shield, AlertTriangle, TrendingUp, Globe as GlobeIcon } from 'lucide-react'
+import { Shield, AlertTriangle, TrendingUp, Globe as GlobeIcon, Loader2 } from 'lucide-react'
 
 function Globe() {
   return (
@@ -27,11 +28,26 @@ function Globe() {
 }
 
 export default function WorldMonitor() {
+  const [isMounted, setIsMounted] = useState(false)
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
   const signals = [
     { id: 1, type: 'Security', location: 'South China Sea', msg: 'Increased naval activity detected.', level: 'Medium' },
     { id: 2, type: 'Trade', location: 'Suez Canal', msg: 'New regulations on shipping containers.', level: 'Low' },
     { id: 3, type: 'Crisis', location: 'Central Sahel', msg: 'Humanitarian corridor negotiations stall.', level: 'High' },
   ]
+
+  if (!isMounted) {
+    return (
+      <div className="h-[calc(100vh-64px)] flex items-center justify-center bg-black text-slate-500 font-mono">
+        <Loader2 className="w-8 h-8 animate-spin mr-3" />
+        INITIALIZING GEOPOLITICAL_ENGINE...
+      </div>
+    )
+  }
 
   return (
     <div className="h-[calc(100vh-64px)] flex overflow-hidden">
