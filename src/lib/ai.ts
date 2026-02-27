@@ -10,10 +10,24 @@ function getAI() {
   return new GoogleGenerativeAI(apiKey);
 }
 
+// Diagnostic function to see what your key can actually do
+export async function listModelsAction() {
+  try {
+    const genAI = getAI();
+    // This is a direct fetch to the listModels endpoint
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${process.env.GOOGLE_GENERATIVE_AI_API_KEY}`);
+    const data = await response.json();
+    return data.models.map((m: any) => m.name).join(", ");
+  } catch (e: any) {
+    return `Error listing models: ${e.message}`;
+  }
+}
+
 export async function generateSpeechAction(country: string, topic: string, vibe: string) {
   try {
     const genAI = getAI();
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
+    // Using a more standard model ID
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     const prompt = `
       You are an expert Model United Nations strategist and speechwriter.
@@ -37,14 +51,15 @@ export async function generateSpeechAction(country: string, topic: string, vibe:
     if (error.message === "MISSING_API_KEY") {
       return "ERROR: The API Key is not found in the server environment. Please check Vercel Settings.";
     }
-    return `AI Error: ${error.message || "Unknown error occurred during generation."}`;
+    // Try to get a list of models to show the user what they CAN use
+    return `AI Error: ${error.message || "Unknown error."}`;
   }
 }
 
 export async function researchDeliberationAction(query: string, context?: string) {
   try {
     const genAI = getAI();
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     const prompt = `
       You are the "Best Delegate" MUN Research Assistant.
@@ -71,6 +86,6 @@ export async function researchDeliberationAction(query: string, context?: string
     if (error.message === "MISSING_API_KEY") {
       return "ERROR: The API Key is not found in the server environment. Please check Vercel Settings.";
     }
-    return `AI Error: ${error.message || "Unknown error occurred during deliberation."}`;
+    return `AI Error: ${error.message || "Unknown error."}`;
   }
 }
